@@ -19,40 +19,17 @@ const db = getFirestore(app);
 
 //Cloud Firestoreから取得したデータを表示する
 const fetchHistoryData = async () => {
-  try {
-    console.log("Firebase接続開始...");
-    let tags = "";
+  let tags = "";
 
-    //reportsコレクションのデータを取得
-    const querySnapshot = await getDocs(collection(db, "reports"));
-    console.log("取得したドキュメント数:", querySnapshot.size);
+//reportsコレクションのデータを取得
+  const querySnapshot = await getDocs(collection(db, "reports"));
 
-    if (querySnapshot.empty) {
-      console.log("データが存在しません");
-      tags = "<tr><td colspan='4'>データがありません</td></tr>";
-    } else {
-      //データをテーブル表の形式に合わせてHTMLに挿入
-      querySnapshot.forEach((doc) => {
-        console.log(`${doc.id} => ${JSON.stringify(doc.data())}`);
-        const data = doc.data();
-        tags += `<tr><td>${data.date || ''}</td><td>${data.name || ''}</td><td>${data.work || ''}</td><td>${data.comment || ''}</td></tr>`
-      });
-    }
-    
-    const targetElement = document.getElementById("js-history");
-    if (targetElement) {
-      targetElement.innerHTML = tags;
-      console.log("HTML挿入完了");
-    } else {
-      console.error("js-history要素が見つかりません");
-    }
-  } catch (error) {
-    console.error("Firebase接続エラー:", error);
-    const targetElement = document.getElementById("js-history");
-    if (targetElement) {
-      targetElement.innerHTML = "<tr><td colspan='4'>エラーが発生しました</td></tr>";
-    }
-  }
+  //データをテーブル表の形式に合わせてHTMLに挿入
+  querySnapshot.forEach((doc) => {
+    console.log(`${doc.id} => ${doc.data()}`);
+    tags += `<tr><td>${doc.data().date}</td><td>${doc.data().name}</td><td>${doc.data().work}</td><td>${doc.data().comment}</td></tr>`
+  });
+  document.getElementById("js-history").innerHTML = tags;
 };
 
 // Cloud Firestoreから取得したデータを表示する
